@@ -1,0 +1,40 @@
+namespace ResponsabilidadUnica
+{
+    public class ProductosServicio
+    {
+        private readonly Cache cache;
+        private readonly Logging logging;
+        private readonly Almacenamiento almacenamiento;
+
+        public ProductosServicio()
+        {
+            logging = new Logging();
+            almacenamiento = new Almacenamiento();
+            cache = new Cache();
+        }
+
+        public void GuardarProducto(string contenido, string NombreDelProducto)
+        {
+            logging.Info($"vamos a insertar el Producto {NombreDelProducto}");
+            almacenamiento.EscribirFichero(NombreDelProducto, contenido);
+            logging.Info($"Producto {NombreDelProducto} insertado");
+            cache.Add(NombreDelProducto, contenido);
+        }
+
+        public string ConsultarProducto(string NombreDelProducto)
+        {
+            logging.Info($"Consultar Producto {NombreDelProducto}");
+
+            string contenido = cache.Get(NombreDelProducto);
+            if (!string.IsNullOrWhiteSpace(contenido))
+            {
+                logging.Info($"Producto encontrado en la cache {NombreDelProducto}");
+                return contenido;
+            }
+
+            logging.Info($"buscar Producto en el sistema de archivos {NombreDelProducto}");
+
+            return almacenamiento.LeerFichero(NombreDelProducto);
+        }
+    }
+}
