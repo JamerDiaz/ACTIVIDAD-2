@@ -12,29 +12,29 @@ namespace Liskov
             cache = new Cache();
         }
 
-        public void GuardarArticulo(string contenido, string titulo)
+        public void GuardarProducto(string contenido, string NombreArticulo)
         {
-            logging.Info($"vamos a insertar el articulo {titulo}");
+            logging.Info($"vamos a insertar el articulo {NombreArticulo}");
             almacenamiento.Guardar(titulo, contenido);
-            logging.Info($"articulo {titulo} insertado");
-            cache.Add(titulo, contenido);
+            logging.Info($"articulo {NombreArticulo} insertado");
+            cache.Add(NombreArticulo, contenido);
         }
 
-        public string ConsultarArticulo(string titulo)
+        public string ConsultarProducto(string NombreArticulo)
         {
 
-            logging.Info($"Consultar artículo {titulo}");
+            logging.Info($"Consultar Producto {NombreArticulo}");
 
-            string contenido = _cache.Get(titulo);
+            string contenido = _cache.Get(NombreArticulo);
             if (!string.IsNullOrWhiteSpace(contenido))
             {
-                logging.Info($"Artículo encontrado en la cache {titulo}");
+                logging.Info($"Artículo encontrado en la cache {NombreArticulo}");
                 return contenido;
             }
 
-            logging.Info($"buscar articulo en el sistema de archivos {titulo}");
+            logging.Info($"buscar articulo en el sistema de archivos {NombreArticulo}");
 
-            return _almacenamiento.Leer(titulo);
+            return _almacenamiento.Leer(NombreArticulo);
 
         }
     }
