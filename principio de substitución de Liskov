@@ -1,0 +1,41 @@
+namespace Liskov
+{
+ public class ArticulosServicio
+    {
+        private readonly Cache _cache;
+        private readonly ILogging _logging;
+        private readonly IAlmacenamiento _almacenamiento;
+        public ArticulosServicio()
+        {
+            logging = new DatabaseLog();
+            almacenamiento = new AlmacenamientoSQL();
+            cache = new Cache();
+        }
+
+        public void GuardarArticulo(string contenido, string titulo)
+        {
+            logging.Info($"vamos a insertar el articulo {titulo}");
+            almacenamiento.Guardar(titulo, contenido);
+            logging.Info($"articulo {titulo} insertado");
+            cache.Add(titulo, contenido);
+        }
+
+        public string ConsultarArticulo(string titulo)
+        {
+
+            logging.Info($"Consultar artículo {titulo}");
+
+            string contenido = _cache.Get(titulo);
+            if (!string.IsNullOrWhiteSpace(contenido))
+            {
+                logging.Info($"Artículo encontrado en la cache {titulo}");
+                return contenido;
+            }
+
+            logging.Info($"buscar articulo en el sistema de archivos {titulo}");
+
+            return _almacenamiento.Leer(titulo);
+
+        }
+    }
+}
