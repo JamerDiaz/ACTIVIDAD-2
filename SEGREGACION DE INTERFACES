@@ -1,0 +1,41 @@
+namespace SegregacionInterfaces
+{
+    public class ProductoServicio
+    {
+        private readonly Cache cache;
+        private readonly ILogging logging;
+        private readonly IAlmacenamiento almacenamiento;
+
+        public ProductoServicio()
+        {
+            logging = new DatabaseLog();
+            almacenamiento = new AlmacenamientoSQL();
+            cache = new Cache();
+        }
+
+        public void GuardarProducto(string contenido, string NombreProducto)
+        {
+            logging.Info($"vamos a insertar el Producto {NombreProducto}");
+            almacenamiento.Guardar(NombreProducto, contenido);
+            logging.Info($"Producto {NombreProducto} insertado");
+            cache.Add(NombreProducto, contenido);
+        }
+
+        public string ConsultarProducto(string NombreProducto)
+        {
+
+            logging.Info($"Consultar Producto {NombreProducto}");
+
+            string contenido = cache.Get(NombreProducto);
+            if (!string.IsNullOrWhiteSpace(contenido))
+            {
+                logging.Info($"Producto encontrado en la cache {NombreProducto}");
+                return contenido;
+            }
+
+            logging.Info($"buscar Producto en el sistema de archivos {NombreProducto}");
+
+            return almacenamiento.Leer(NombreProducto);
+        }     
+    }
+}
