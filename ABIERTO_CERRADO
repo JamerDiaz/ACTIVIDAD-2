@@ -1,0 +1,49 @@
+namespace AbiertoCerrado
+{
+    public class ArticulosServicio
+    {
+        private readonly Cache _cache;
+        private readonly ILogging _logging;
+        private readonly Almacenamiento _almacenamiento;
+
+        public ArticulosServicio()
+        {
+            logging = Nuevo DatabaseLog();
+            almacenamiento = Nuevo Almacenamiento();
+            cache = Nuevo Cache();
+        }
+
+        public void GuardarProducto(string contenido, string NombreArticulo)
+        {
+            logging.Info($"vamos a insertar el producto {NombreArticulo}");
+            almacenamiento.EscribirFichero(NombreArticulo, contenido);
+            logging.Info($"Producto {NombreArticulo} insertado");
+            cache.Add(NombreArticulo, contenido);
+        }
+
+        public string ConsultarProducto(string NombreArticulo)
+        {
+            try
+            {
+                logging.Info($"Consultar artículo {NombreArticulo}");
+
+                string contenido = _cache.Get(titulo);
+                if (!string.IsNullOrWhiteSpace(contenido))
+                {
+                    logging.Info($"Artículo encontrado en la cache {NombreArticulo}");
+                    return contenido;
+                }
+
+                logging.Info($"buscar articulo en el sistema de archivos {NombreArticulo}");
+
+            }
+            catch(Exception e)
+            {
+                logging.Fatal("Error", e);
+              
+            }
+                return _almacenamiento.LeerFichero(titulo);
+
+        }
+    }
+}
